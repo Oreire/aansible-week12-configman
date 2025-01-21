@@ -10,8 +10,12 @@ terraform {
 
 provider "aws" {
   region     = "eu-west-2"
+  /* access_key = var.AWS_ACCESS_KEY_ID
+  secret_key  = var.AWS_SECRET_KEY_ID */
  
 }
+/* variable AWS_ACCESS_KEY_ID {}
+variable AWS_SECRET_KEY_ID {} */
 
 # Create Security Group for EC2 web and app servers  
 resource "aws_security_group" "laredo_sg" {
@@ -90,24 +94,6 @@ resource "aws_instance" "ubuntu_node" {
 }
 
 # Generate Ansible Inventory
-/* resource "null_resource" "ansible_inventory" {
-  depends_on = [
-    aws_instance.amazon_linux_node,
-    aws_instance.ubuntu_node,
-  ]
-  provisioner "local-exec" {
-    command = <<-EOT
-      echo "Provisioner is running..."
-      echo "[ansible_control_node]" > inventory.ini
-      echo "$(terraform output -raw ansible_control_node_ip)" >> inventory.ini
-      echo "\n[amazon_linux_nodes]" >> inventory.ini
-      terraform output -json amazon_linux_node_ips | jq -r '.[]' >> inventory.ini
-      echo "\n[ubuntu_nodes]" >> inventory.ini
-      terraform output -json ubuntu_node_ips | jq -r '.[]' >> inventory.ini
-    EOT
-  }
-} */
-
 resource "null_resource" "ansible_inventory" {
   depends_on = [
     aws_instance.amazon_linux_node,
@@ -116,13 +102,26 @@ resource "null_resource" "ansible_inventory" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      echo "[amazon_linux_nodes]" > inventory.ini
-      terraform output -json amazon_linux_node_ips | jq -r '.[] | . + " ansible_ssh_user=ec2-user"' >> inventory.ini
-      echo "\n[ubuntu_nodes]" >> inventory.ini
-      terraform output -json ubuntu_node_ips | jq -r '.[] | . + " ansible_ssh_user=ubuntu"' >> inventory.ini
+      amazon_linux_node_ips=$(terraform output -json amazon_linux_node_ips | jq -r '.[]')
+      ubuntu_node_ips=$(terraform output -json ubuntu_node_ips | jq -r '.[]')
+
+      inventory_file="inventory.ini"
+
+      echo "[amazon_linux_nodes]" > $inventory_file
+
+      for ip in $amazon_linux_node_ips; do
+          echo $ip >> $inventory_file
+      done
+
+      echo "\n[ubuntu_nodes]" >> $inventory_file
+
+      for ip in $ubuntu_node_ips; do
+          echo $ip >> $inventory_file
+      done
     EOT
   }
 }
+
 
 
 
