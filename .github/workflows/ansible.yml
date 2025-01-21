@@ -49,20 +49,12 @@ jobs:
           terraform output -json > output.json
           cat output.json  # Output the content for debugging
     
-      - name: Confirm Destroy 
+      - name: Terraform Destroy 
         if: github.event.inputs.action == 'destroy' 
-        run: | 
-          echo "You are about to destroy the infrastructure. Are you sure you want to continue?" 
-          echo "Please confirm by setting the CONFIRM_DESTROY environment variable to 'yes'." 
-          if [ "$CONFIRM_DESTROY" != "yes" ]; then 
-            echo "Destroy action not confirmed. Exiting." 
-            exit 1 
-          fi
-                       
+        run: terraform destroy -auto-approve
+                        
       - name: Terraform Apply
         if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
         run: terraform apply -auto-approve plan.tfplan
 
-      - name: Terraform Destroy
-        if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve
+      
