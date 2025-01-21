@@ -45,7 +45,9 @@ jobs:
         run: terraform plan -out=plan.tfplan
 
       - name: Convert Terraform Output to JSON
-        run:  json_output=$(terraform output -json)
+        run: |
+          terraform output -json > output.json
+          cat output.json  # Output the content for debugging
     
       - name: Confirm Destroy 
         if: github.event.inputs.action == 'destroy' 
