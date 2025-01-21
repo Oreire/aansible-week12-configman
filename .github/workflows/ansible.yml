@@ -49,12 +49,12 @@ jobs:
           terraform output -json > output.json
           cat output.json  # Output the content for debugging
     
-      # - name: Terraform Destroy 
-      #  if: github.event_name == 'push' || (github.event.inputs.action == 'destroy') 
-      # run: terraform destroy -auto-approve
+      - name: Terraform Destroy 
+        if: github.event_name == 'push' || (github.event.inputs.action == 'destroy') 
+        run: terraform destroy -auto-approve
                         
-      - name: Terraform Apply
-        if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
-        run: terraform apply -auto-approve plan.tfplan
+      #- name: Terraform Apply
+      #  if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
+      #  run: terraform apply -auto-approve plan.tfplan
 
       
