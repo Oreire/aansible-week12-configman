@@ -26,6 +26,6 @@ jobs:
         run: terraform validate
 
       - name: Terraform Apply
-        run: terraform apply -var-file=ansible.tfvars -auto-approve
+        run: terraform apply -auto-approve
 
       
