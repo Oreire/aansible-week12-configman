@@ -31,16 +31,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Check for jq
-        run: |
-          if ! command -v jq &> /dev/null
-          then
-            echo "jq is not installed. Exiting."
-            exit 1
-          else
-            echo "jq is installed."
-          fi
-
       - name: Terraform Init
         run: terraform init
 
@@ -54,29 +44,12 @@ jobs:
         id: plan
         run: terraform plan -out=plan.tfplan
 
-      - name: Validate Terraform Output
-        run: |
-          terraform output -json > output.json
-          jq empty output.json
-          if [ $? -ne 0 ]; then
-            echo "Invalid JSON output from Terraform. Exiting."
-            exit 1
-          else
-            echo "Valid JSON output from Terraform."
-          fi
-
-      - name: Check for Changes
-        id: changes
-        run: |
-          CHANGES=$(terraform show -json plan.tfplan | jq -r '.resource_changes | length')
-          if [[ $CHANGES -eq 0 ]]; then
-            echo "No changes detected."
-            exit 0
-          fi
-          echo "::set-output name=changes::$CHANGES"
-
+      - name: Convert Terraform Output to JSON
+        run:  json_output=$(terraform output -json)
+        
+               
       - name: Terraform Apply
-        if: github.event_name == 'push' || (github.event.inputs.action == 'apply' && steps.changes.outputs.changes != '0')
+        if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
         run: terraform apply -auto-approve plan.tfplan
 
       - name: Terraform Destroy

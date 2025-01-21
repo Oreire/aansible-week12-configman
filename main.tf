@@ -18,8 +18,8 @@ provider "aws" {
 variable AWS_SECRET_KEY_ID {} */
 
 # Create Security Group for EC2 web and app servers  
-resource "aws_security_group" "glanik_sg" {
-  name        = "GLANIK-SG"
+resource "aws_security_group" "glan_sg" {
+  name        = "GLAN-SG"
   description = "Security Group for web servers"
 
   egress {
@@ -54,7 +54,7 @@ resource "aws_instance" "ansible_control_node" {
   ami           = "ami-0c76bd4bd302b30ec"
   instance_type = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.glanik_sg.id]
+  vpc_security_group_ids = [aws_security_group.glan_sg.id]
 
   tags = {
     Name = "AnsibleControlNode"
@@ -70,7 +70,7 @@ resource "aws_instance" "amazon_linux_node" {
   ami                    = "ami-0c76bd4bd302b30ec"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.glanik_sg.id]
+  vpc_security_group_ids = [aws_security_group.glan_sg.id]
 
   tags = {
     Name         = "WebAmazonLinuxNode-${count.index + 1}"
@@ -84,7 +84,7 @@ resource "aws_instance" "ubuntu_node" {
   ami                    = "ami-091f18e98bc129c4e"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.glanik_sg.id]
+  vpc_security_group_ids = [aws_security_group.glan_sg.id]
 
   tags = {
     Name         = "AppUbuntuNode-${count.index + 1}"
