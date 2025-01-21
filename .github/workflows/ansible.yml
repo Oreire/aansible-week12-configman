@@ -47,7 +47,11 @@ jobs:
       - name: Check for Changes
         id: changes
         run: |
-          CHANGES=$(terraform show -json plan.tfplan | jq '.resource_changes | length')
+          CHANGES=$(terraform show -json plan.tfplan | jq -r '.resource_changes | length')
+          if [[ $CHANGES -eq 0 ]]; then
+            echo "No changes detected."
+            exit 0
+          fi
           echo "::set-output name=changes::$CHANGES"
 
       - name: Terraform Apply
