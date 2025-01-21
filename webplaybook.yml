@@ -1,0 +1,37 @@
+---
+- name: Nginx Playbook
+  hosts: web
+  become: yes
+  gather_facts: yes
+  
+  tasks:
+    - name: Update all packages on Amazon Linux
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+            
+    - name: Update all packages on Ubuntu Linux 
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
+
+    - name: Install Nginx on Amazon Linux  
+      yum:
+        name: nginx
+        state: present
+      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+
+    - name: Install Nginx on Ubuntu Linux 
+      apt:
+        name: nginx
+        state: present
+      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
+
+    - name: Manage Nginx Service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+      when: nginx_state == 'present'

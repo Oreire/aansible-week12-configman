@@ -1,0 +1,32 @@
+---
+- name: Install Java 17 and Maven 3.0 on Amazon Linux and Ubuntu
+  hosts: all
+  become: yes
+  gather_facts: yes
+  
+  tasks:
+    - name: Install Java 17 on Amazon Linux
+      yum:
+        name: java-17-openjdk
+        state: present
+      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+
+    - name: Install Maven 3.0 on Amazon Linux
+      yum:
+        name: maven
+        state: present
+      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+
+    - name: Install Java 17 on Ubuntu
+      apt:
+        name: openjdk-17-jdk
+        state: present
+      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
+      update_cache: yes
+
+    - name: Install Maven 3.0 on Ubuntu
+      apt:
+        name: maven
+        state: present
+      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
+      update_cache: yes
