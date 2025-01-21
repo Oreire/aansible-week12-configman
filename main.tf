@@ -94,37 +94,23 @@ resource "aws_instance" "ubuntu_node" {
 }
 
 # Generate Ansible Inventory
-
-/* resource "null_resource" "ansible_inventory" {
-  triggers = {
-    instance_ids = "${join(",", aws_instance.amazon_linux_node[*].id)}"
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      echo "[ansible_control_node]" > inventory.ini
-      echo "${aws_instance.ansible_control_node.public_ip}" >> inventory.ini
-      echo "\n[amazon_linux_nodes]" >> inventory.ini
-      echo "${join("\n", aws_instance.amazon_linux_node[*].public_ip)}" >> inventory.ini
-      echo "\n[ubuntu_nodes]" >> inventory.ini
-      echo "${join("\n", aws_instance.ubuntu_node[*].public_ip)}" >> inventory.ini
-    EOT
-  }
-} */
-
 resource "null_resource" "ansible_inventory" {
   depends_on = [
     aws_instance.amazon_linux_node,
     aws_instance.ubuntu_node,
   ]
-
   provisioner "local-exec" {
     command = <<-EOT
-      echo "[amazon_linux_nodes]" >> inventory.ini
-      echo "${join("\\n", aws_instance.amazon_linux_node[*].public_ip)}" >> inventory.ini
-      echo "\\n[ubuntu_nodes]" >> inventory.ini
-      echo "${join("\\n", aws_instance.ubuntu_node[*].public_ip)}" >> inventory.ini
+      echo "Provisioner is running..."
+      echo "[ansible_control_node]" > inventory.ini
+      echo "$(terraform output -raw ansible_control_node_ip)" >> inventory.ini
+      echo "\n[amazon_linux_nodes]" >> inventory.ini
+      terraform output -json amazon_linux_node_ips | jq -r '.[]' >> inventory.ini
+      echo "\n[ubuntu_nodes]" >> inventory.ini
+      terraform output -json ubuntu_node_ips | jq -r '.[]' >> inventory.ini
     EOT
   }
 }
+
+
 
