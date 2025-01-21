@@ -9,7 +9,7 @@ on:
       action:
         description: 'Choose action: apply or destroy'
         required: true
-        default: 'apply'
+        default: 'destroy'
         type: choice
         options:
           - apply
