@@ -29,7 +29,7 @@ data "aws_security_group" "existing_laredo_sg" {
 }
 
 resource "aws_security_group" "laredo_sg" {
-  count = length(data.aws_security_group.existing_laredo_sg.ids) == 0 ? 1 : 0
+  count = length(data.aws_security_group.existing_laredo_sg.id) == 0 ? 1 : 0
   name        = "LAREDO-SG"
   description = "Security Group for web servers"
 
