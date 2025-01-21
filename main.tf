@@ -10,12 +10,12 @@ terraform {
 
 provider "aws" {
   region     = "eu-west-2"
-  access_key = var.AWS_ACCESS_KEY_ID
-  secret_key = var.AWS_SECRET_KEY_ID
+  /* access_key = var.AWS_ACCESS_KEY_ID
+  secret_key = var.AWS_SECRET_KEY_ID */
 }
 
-variable "AWS_ACCESS_KEY_ID" {}
-variable "AWS_SECRET_KEY_ID" {}
+/* variable "AWS_ACCESS_KEY_ID" {}
+variable "AWS_SECRET_KEY_ID" {} */
 
 # Create Security Group for EC2 web and app servers  
 resource "aws_security_group" "invent_sg" {
