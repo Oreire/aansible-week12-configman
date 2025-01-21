@@ -8,7 +8,7 @@ on:
     inputs:
       action:
         description: 'Choose action: apply or destroy'
-        required: false
+        required: true
         default: 'destroy'
         type: choice
         options:
