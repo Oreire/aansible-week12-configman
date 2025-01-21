@@ -44,18 +44,12 @@ jobs:
         id: plan
         run: terraform plan -out=plan.tfplan
 
-      - name: Check for Changes
-        id: changes
-        run: |
-          CHANGES=$(terraform show -json plan.tfplan | jq -r '.resource_changes | length')
-          if [[ $CHANGES -eq 0 ]]; then
-            echo "No changes detected."
-            exit 0
-          fi
-          echo "::set-output name=changes::$CHANGES"
-
+      - name: Convert Terraform Output to JSON
+        run:  json_output=$(terraform output -json)
+        
+               
       - name: Terraform Apply
-        if: github.event_name == 'push' || (github.event.inputs.action == 'apply' && steps.changes.outputs.changes != '0')
+        if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
         run: terraform apply -auto-approve plan.tfplan
 
       - name: Terraform Destroy
