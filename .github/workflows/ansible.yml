@@ -28,7 +28,4 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -var-file=ansible.tfvars -auto-approve
 
-      - name: Generate Ansible Inventory
-        run: terraform output -json > tf_output.json
-
       
