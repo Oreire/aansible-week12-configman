@@ -10,12 +10,8 @@ terraform {
 
 provider "aws" {
   region     = "eu-west-2"
-  /* access_key = var.AWS_ACCESS_KEY_ID
-  secret_key = var.AWS_SECRET_KEY_ID */
+ 
 }
-
-/* variable "AWS_ACCESS_KEY_ID" {}
-variable "AWS_SECRET_KEY_ID" {} */
 
 # Create Security Group for EC2 web and app servers  
 resource "aws_security_group" "invent_sg" {
@@ -94,7 +90,7 @@ resource "aws_instance" "ubuntu_node" {
 }
 
 # Generate Ansible Inventory
-resource "null_resource" "ansible_inventory" {
+/* resource "null_resource" "ansible_inventory" {
   depends_on = [
     aws_instance.amazon_linux_node,
     aws_instance.ubuntu_node,
@@ -110,7 +106,7 @@ resource "null_resource" "ansible_inventory" {
       terraform output -json ubuntu_node_ips | jq -r '.[]' >> inventory.ini
     EOT
   }
-}
+} */
 
 
 
