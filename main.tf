@@ -99,7 +99,7 @@ resource "aws_instance" "ansible_control_node" {
   ami           = "ami-0c76bd4bd302b30ec"
   instance_type = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.laredo_sg.id]
+  vpc_security_group_ids = [aws_security_group.laredo_sg[count.index]]
 
   tags = {
     Name = "AnsibleControlNode"
@@ -115,7 +115,7 @@ resource "aws_instance" "amazon_linux_node" {
   ami                    = "ami-0c76bd4bd302b30ec"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.laredo_sg.id]
+  vpc_security_group_ids = [aws_security_group.laredo_sg[count.index]]
 
   tags = {
     Name         = "WebAmazonLinuxNode-${count.index + 1}"
@@ -129,7 +129,7 @@ resource "aws_instance" "ubuntu_node" {
   ami                    = "ami-091f18e98bc129c4e"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
-  vpc_security_group_ids = [aws_security_group.laredo_sg.id]
+  vpc_security_group_ids = [aws_security_group.laredo_sg[count.index]]
 
   tags = {
     Name         = "AppUbuntuNode-${count.index + 1}"
