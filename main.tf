@@ -16,9 +16,54 @@ provider "aws" {
 }
 /* variable AWS_ACCESS_KEY_ID {}
 variable AWS_SECRET_KEY_ID {} */
+data "aws_security_group" "existing_laredo_sg" {
+  filter {
+    name   = "group-name"
+    values = ["LAREDO-SG"]
+  }
+
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-080c5d7f107b774b7"]
+  }
+}
+
+resource "aws_security_group" "laredo_sg" {
+  count = length(data.aws_security_group.existing_laredo_sg.ids) == 0 ? 1 : 0
+  name        = "LAREDO-SG"
+  description = "Security Group for web servers"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 # Create Security Group for EC2 web and app servers  
-resource "aws_security_group" "laredo_sg" {
+/* resource "aws_security_group" "laredo_sg" {
   name        = "LAREDO-SG"
   description = "Security Group for web servers"
 
@@ -47,7 +92,7 @@ resource "aws_security_group" "laredo_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
+} */
 
 # Create Ansible Control Node
 resource "aws_instance" "ansible_control_node" {
