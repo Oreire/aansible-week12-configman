@@ -19,7 +19,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY_ID }}
   AWS_DEFAULT_REGION: eu-west-2
-
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -46,8 +46,17 @@ jobs:
 
       - name: Convert Terraform Output to JSON
         run:  json_output=$(terraform output -json)
-        
-               
+    
+      - name: Confirm Destroy 
+        if: github.event.inputs.action == 'destroy' 
+        run: | 
+          echo "You are about to destroy the infrastructure. Are you sure you want to continue?" 
+          echo "Please confirm by setting the CONFIRM_DESTROY environment variable to 'yes'." 
+          if [ "$CONFIRM_DESTROY" != "yes" ]; then 
+            echo "Destroy action not confirmed. Exiting." 
+            exit 1 
+          fi
+                       
       - name: Terraform Apply
         if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
         run: terraform apply -auto-approve plan.tfplan
