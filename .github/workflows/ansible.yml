@@ -9,7 +9,7 @@ on:
       action:
         description: 'This enforces Separation of Concerns'
         required: true
-        default: 'destroy'
+        default: 'apply'
         type: choice
         options:
           - apply
@@ -50,17 +50,9 @@ jobs:
           cat inventory.json | tee inventory.ini # Output the content for debugging
       #    cat inventory.json | jq -r '.public_ip.value' > inventory.ini
        
-      #- name: Terraform Apply
-      # if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
-      # run: terraform apply -auto-approve plan.tfplan
-      
-      #- name: Terraform Destroy 
-      #  if: github.event_name == 'push' || (github.event.inputs.action == 'destroy') 
-      # run: terraform destroy -auto-approve
-
-      #- name: Terraform Apply
-      #  if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
-      #  run: terraform apply -auto-approve plan.tfplan
+      - name: Terraform Apply
+        if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
+        run: terraform apply -auto-approve plan.tfplan
       
       - name: Terraform Destroy
         if: github.event_name == 'push' || (github.event.inputs.action == 'destroy')
