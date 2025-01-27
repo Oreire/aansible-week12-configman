@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'This enforces Separations of Concerns'
+        description: 'This enforces Separation of Concerns'
         required: true
-        default: 'apply'
+        default: 'destroy'
         type: choice
         options:
           - apply
@@ -46,10 +46,10 @@ jobs:
 
       - name: Convert Terraform Output to JSON
         run: |
-          terraform output -json > output.json
-          cat output.json  # Output the content for debugging
-    
-              
+          terraform output -json > inventory.json
+          cat inventory.json | tee inventory.ini # Output the content for debugging
+          cat inventory.json | jq -r '.public_ip.value' > inventory.ini
+       
       #- name: Terraform Apply
       # if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
       # run: terraform apply -auto-approve plan.tfplan

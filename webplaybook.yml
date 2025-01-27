@@ -1,5 +1,5 @@
 ---
-- name: Nginx Playbook
+- name: Install and Configure Nginx as reverse proxy
   hosts: web
   become: yes
   gather_facts: yes
@@ -11,23 +11,11 @@
         state: latest
       when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
             
-    - name: Update all packages on Ubuntu Linux 
-      apt:
-        update_cache: yes
-        upgrade: dist
-      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
-
     - name: Install Nginx on Amazon Linux  
       yum:
         name: nginx
         state: present
       when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
-
-    - name: Install Nginx on Ubuntu Linux 
-      apt:
-        name: nginx
-        state: present
-      when: ansible_facts ['distribution'] in ['Ubuntu', 'Debian']
 
     - name: Manage Nginx Service
       service:
@@ -35,3 +23,22 @@
         state: started
         enabled: yes
       when: nginx_state == 'present'
+
+    - name: Copy Config Files
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      mode: '0644'
+      notify:
+      - Restart Nginx
+      become: true
+
+  handlers:
+    - name: Restart Nginx
+      service:
+       name: nginx
+       state: restarted
+      become: true
+
+
+  
