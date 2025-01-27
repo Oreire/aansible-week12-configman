@@ -9,7 +9,7 @@ on:
       action:
         description: 'This enforces Separation of Concerns'
         required: true
-        default: 'apply'
+        default: 'destroy'
         type: choice
         options:
           - apply
