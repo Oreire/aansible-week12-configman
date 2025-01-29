@@ -55,37 +55,31 @@ resource "aws_instance" "ansible_control_node" {
   instance_type = "t2.micro"
   key_name               = "Ans-Auth"
   vpc_security_group_ids = [aws_security_group.tec_sg.id]
-
   tags = {
     Name = "AnsibleControlNode"
     Time-Created = formatdate("MM DD YYYY hh:mm ZZZ", timestamp())
     Department   = "DevOps Management"
   }
 }
-
 # Creation of Managed Nodes (Amazon Linux and Ubuntu Machines)  
-
 resource "aws_instance" "amazon_linux_node" {
   count                  = 3
   ami                    = "ami-0c76bd4bd302b30ec"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
   vpc_security_group_ids = [aws_security_group.tec_sg.id]
-
   tags = {
     Name         = "WebAmazonLinuxNode-${count.index + 1}"
     Time-Created = formatdate("MM DD YYYY hh:mm ZZZ", timestamp())
     Department   = "Dev Team"
   }
 }
-
 resource "aws_instance" "ubuntu_node" {
   count                  = 3
   ami                    = "ami-091f18e98bc129c4e"
   instance_type          = "t2.micro"
   key_name               = "Ans-Auth"
   vpc_security_group_ids = [aws_security_group.tec_sg.id]
-
   tags = {
     Name         = "AppUbuntuNode-${count.index + 1}"
     Time-Created = formatdate("MM DD YYYY hh:mm ZZZ", timestamp())

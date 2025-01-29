@@ -34,9 +34,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Format Check
-        run: terraform fmt
-
       - name: Terraform Validate
         run: terraform validate
 
@@ -48,16 +45,11 @@ jobs:
         run: |
           terraform output -json > inventory.json
           cat inventory.json | tee inventory.ini # Output the content for debugging
-      #    cat inventory.json | jq -r '.public_ip.value' > inventory.ini
-       
-      - name: Terraform Apply
-        if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
-        run: terraform apply -auto-approve plan.tfplan
+            
+      #- name: Terraform Apply
+      #  if: github.event_name == 'push' || (github.event.inputs.action == 'apply')
+      #  run: terraform apply -auto-approve plan.tfplan
       
-      #- name: Terraform Destroy
-      #  if: github.event_name == 'push' || (github.event.inputs.action == 'destroy')
-      #  run: terraform destroy -auto-approve
-      
-     
-
-      
+      - name: Terraform Destroy
+        if: github.event_name == 'push' || (github.event.inputs.action == 'destroy')
+        run: terraform destroy -auto-approve   

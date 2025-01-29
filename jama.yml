@@ -8,13 +8,13 @@
     - name: Update apt cache
       apt:
         update_cache: yes
-      when: ansible_facts['distribution'] == 'Ubuntu'
+      when: ansible_facts['distribution'] in ['Ubuntu']
 
     - name: Install Java 17
       apt:
         name: openjdk-17-jdk
         state: present
-      when: ansible_facts['distribution'] == 'Ubuntu'
+      when: ansible_facts['distribution'] in ['Ubuntu']
 
     - name: Add the Apache Maven PPA
       apt_repository:
@@ -25,7 +25,7 @@
       apt:
         name: maven
         state: present
-      when: ansible_facts['distribution'] == 'Ubuntu'
+      when: ansible_facts['distribution'] in ['Ubuntu']
 
     - name: Verify Java installation
       command: java -version
@@ -40,3 +40,6 @@
       service:
         name: some_service
         state: restarted
+
+
+

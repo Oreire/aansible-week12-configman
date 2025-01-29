@@ -9,20 +9,20 @@
       yum:
         name: '*'
         state: latest
-      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+      when: ansible_facts['distribution'] in ['Amazon', 'RedHat']
             
     - name: Install Nginx on Amazon Linux  
       yum:
         name: nginx
         state: present
-      when: ansible_facts ['distribution'] in ['Amazon', 'Redhat']
+      when: ansible_facts['distribution'] in ['Amazon', 'RedHat']
 
     - name: Manage Nginx Service
       service:
         name: nginx
         state: started
         enabled: yes
-      when: nginx_state == 'present'
+      when: ansible_facts['pkg_mgr'] == 'yum'
 
     - name: Copy Config Files
       template:
@@ -36,9 +36,9 @@
   handlers:
     - name: Restart Nginx
       service:
-       name: nginx
-       state: restarted
-      become: true
+        name: nginx
+        state: restarted
+        become: true
 
 
   
