@@ -61,16 +61,16 @@
     when: ansible_facts['distribution'] in ['Ubuntu']
 
   - name: Building Java Application on Amazon Node
-    shell: mvn clean install 
+    shell: sudo mvn clean install 
     args:
-     chdir: /home/ec2-user/stockprice
+     chdir: /home/ec2-user/stockprice/
     register: build_output
     when: maven_state == 'present' and ansible_facts['distribution'] in ['Amazon']
 
   - name: Building Java Application on Ubuntu Node
-    shell: mvn clean install 
+    shell: sudo mvn clean install 
     args:
-     chdir: /home/ubuntu/stockprice
+     chdir: /home/ubuntu/stockprice/
     register: build_output
     when: maven_state == 'present' and ansible_facts['distribution'] in ['Ubuntu']
     
@@ -97,6 +97,24 @@
      mode: '0644'
     when: ansible_facts['distribution'] in ['Ubuntu']
   
+  #- name: Run Spring Boot Application
+   # shell: mvn spring-boot:run
+    #args:
+     # chdir: /home/ec2-user/stockprice
+    #register: spring_boot_output
+    #when: maven_state == 'present' and ansible_facts['distribution'] in ['Amazon']
+
+  #- name: Run Spring Boot Application
+   # shell: mvn spring-boot:run
+    #args:
+     # chdir: /home/ubuntu/stockprice
+   # register: spring_boot_output
+   # when: maven_state == 'present' and ansible_facts['distribution'] in ['Ubuntu']
+
+  #- name: Show Spring Boot Logs
+   # debug:
+    #  var: spring_boot_output.stdout_lines
+  
   - name: Reloading stockprice.service 
     systemd:
      daemon_reload: yes
@@ -104,6 +122,7 @@
     systemd:
      name: stockprice.service
      state: started
+    when: ansible_facts['distribution'] in ['Ubuntu', 'Amazon']
   
   - name: Check if stockprice service is running
     systemd:
