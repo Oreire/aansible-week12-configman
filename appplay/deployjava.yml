@@ -60,14 +60,14 @@
      state: "{{ maven_state }}"
     when: ansible_facts['distribution'] in ['Ubuntu']
 
-  - name: Building Java Application
+  - name: Building Java Application on Amazon Node
     shell: mvn clean install 
     args:
      chdir: /home/ec2-user/stockprice
     register: build_output
     when: maven_state == 'present' and ansible_facts['distribution'] in ['Amazon']
 
-  - name: Building Java Application
+  - name: Building Java Application on Ubuntu Node
     shell: mvn clean install 
     args:
      chdir: /home/ubuntu/stockprice
@@ -83,14 +83,14 @@
      path: /etc/systemd/system/stockprice.service
      state: touch
   
-  - name: Configuring stockprice.service file
+  - name: Configuring stockprice.service file on Amazon Node
     copy:
      src: stockprice.service.j2
      dest: /etc/systemd/system/stockprice.service
      mode: '0644'
     when: ansible_facts['distribution'] in ['Amazon']
   
-  - name: Configuring stockprice.service file
+  - name: Configuring stockprice.service file on Ubuntu Node
     copy:
      src: stockprice.service.j2
      dest: /etc/systemd/system/stockprice.service
