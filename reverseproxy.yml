@@ -1,5 +1,5 @@
 ---
-- name: Instally and configure Nginx as reverse proxy
+- name: Install and configure Nginx as reverse proxy
   hosts: web
   become: yes
 

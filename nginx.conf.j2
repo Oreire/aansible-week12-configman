@@ -1,51 +1,3 @@
-http {
-    upstream backend {
-        server 172.31.44.88;
-        server 172.31.43.73;
-        server 172.31.37.174;   
-    }
-
-    server {
-        listen 80;
-        server_name 172.31.46.145;
-        
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-
-    server {
-        listen 80;
-        server_name 172.31.35.228;
-
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-
-    server {
-        listen 80;
-        server_name 172.31.41.142;
-
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-}
-
-
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
@@ -72,9 +24,8 @@ http {
     default_type application/octet-stream;
 
     upstream backend_servers {
-        server 172.31.44.88;
-        server 172.31.43.73;
-        server 172.31.37.174;
+        server 172.31.47.247:8080;
+        server 172.31.42.153:8080;
     }
 
     server {

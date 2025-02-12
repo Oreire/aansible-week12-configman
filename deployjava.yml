@@ -1,0 +1,116 @@
+---
+- name: Deploying Java Application
+  become: true
+  hosts: app
+  gather_facts: true
+
+  vars:
+    java_state: present
+    maven_state: present
+  tasks:
+  - name: Installing Git In Amazon Linux OS
+    yum: 
+     name: git
+     state: present
+    when: ansible_facts['distribution'] in ['Amazon']
+
+  - name: Installing Git in Ubuntu OS
+    apt: 
+     name: git
+     state: present
+    when: ansible_facts['distribution'] in ['Ubuntu']
+
+  - name: Cloning Git Repo
+    git:
+     repo: https://github.com/techbleat/stockprice.git
+     dest: /home/ec2-user/stockprice
+    when: ansible_facts['distribution'] in ['Amazon']
+
+  - name: Cloning Git Repo
+    git:
+     repo: https://github.com/techbleat/stockprice.git
+     dest: /home/ubuntu/stockprice
+    when: ansible_facts['distribution'] in ['Ubuntu']
+  
+  - name: Installing Java on Amazon Linux OS
+    yum:
+     name: java-17-amazon-corretto
+     state:  "{{ java_state }}"
+    when: java_state == 'absent' and ansible_facts['distribution'] in ['Amazon']
+
+  - name: Update apt package list
+    apt:
+      update_cache: yes
+    when: ansible_facts['distribution'] in ['Ubuntu']
+    
+  - name: Installing Java on Ubuntu OS
+    apt:
+     name: openjdk-17-jdk
+     state: "{{ java_state }}"
+    when: java_state == 'absent' and ansible_facts['distribution'] in ['Ubuntu']
+
+  - name: Installing Maven on Amazon Linux OS
+    yum:
+     name: maven
+     state: "{{ maven_state }}"
+    when: ansible_facts['distribution'] in ['Amazon']
+  - name: Installing Maven on Ubuntu OS
+    apt:
+     name: maven
+     state: "{{ maven_state }}"
+    when: ansible_facts['distribution'] in ['Ubuntu']
+
+  - name: Building Java Application
+    shell: mvn clean install 
+    args:
+     chdir: /home/ec2-user/stockprice
+    register: build_output
+    when: maven_state == 'present' and ansible_facts['distribution'] in ['Amazon']
+
+  - name: Building Java Application
+    shell: mvn clean install 
+    args:
+     chdir: /home/ubuntu/stockprice
+    register: build_output
+    when: maven_state == 'present' and ansible_facts['distribution'] in ['Ubuntu']
+    
+  - name: Show Build Logs
+    debug: 
+      var: build_output.stdout_lines 
+
+  - name: Creating Service file
+    file:
+     path: /etc/systemd/system/stockprice.service
+     state: touch
+  
+  - name: Configuring stockprice.service file
+    copy:
+     src: stockprice.service.j2
+     dest: /etc/systemd/system/stockprice.service
+     mode: '0644'
+    when: ansible_facts['distribution'] in ['Amazon']
+  
+  - name: Configuring stockprice.service file
+    copy:
+     src: stockprice.service.j2
+     dest: /etc/systemd/system/stockprice.service
+     mode: '0644'
+    when: ansible_facts['distribution'] in ['Ubuntu']
+  
+  - name: Reloading stockprice.service 
+    systemd:
+     daemon_reload: yes
+  - name: Starting the stockprice.service 
+    systemd:
+     name: stockprice.service
+     state: started
+  
+  - name: Check if stockprice service is running
+    systemd:
+      name: stockprice.service
+      state: started
+    register: service_status
+
+  - name: Show service status
+    debug:
+      var: service_status
