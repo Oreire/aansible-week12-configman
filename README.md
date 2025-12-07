@@ -1,5 +1,10 @@
 ## Automated Provisioning and Deployment of Infrastructure and Application Using Terraform and Ansible on AWS
 
+Overview:
+Implemented an automated, end‑to‑end provisioning and deployment pipeline for cloud infrastructure and applications on AWS using Terraform and Ansible. The project demonstrates Infrastructure as Code (IaC) and configuration management best practices, enabling resilient, scalable, and high‑performance cloud environments. Terraform scripts provisioned AWS resources consistently across environments, while Ansible automated configuration management and application deployment. This approach reduced manual intervention, improved operational stability, and streamlined cloud resource orchestration, ensuring production‑ready deployments aligned with modern DevOps principles.
+
+
+
 ## Project Summary
 
 Organizations today are increasingly driven by the need to develop resilient, scalable, reliable, and high-performance cloud-based applications without being burdened by the complexities of managing underlying infrastructure. This project provides hands-on experience in achieving automated infrastructure provisioning, management, and deployment in a production environment using Terraform and Ansible. By leveraging these tools, the project demonstrates how cloud resources can be efficiently orchestrated to support seamless application deployment and operational stability.
